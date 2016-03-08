@@ -169,17 +169,19 @@ class WallpaperChanger{
 
 
 		//get the current image
-		$curr = '';
+		$curr_name	= '';
+		$curr		= '';
 		if( isset($this->config['pages'][$title]) ){
-			$temp = explode('/',$this->config['pages'][$title]['img']);
-			$curr = end($temp);
+			$curr_name	= basename($this->config['pages'][$title]['img']);
+			$curr		= $this->config['pages'][$title]['img'];
 		}
 
 
 		//display available images
-		$path	= trim($this->config['path'],'/\\');
-		$dir	= $dataDir.'/data/_uploaded/'.$path;
-		$files	= scandir($dir);
+		$path		= trim($this->config['path'],'/\\');
+		$dir		= $dataDir.'/data/_uploaded/'.$path;
+		$files		= scandir($dir);
+		$curr_shown = false;
 		echo '<div class="wallpaper_images">';
 		foreach($files as $file){
 
@@ -189,6 +191,7 @@ class WallpaperChanger{
 
 			$full		= $dir.'/'.$file;
 			$img		= '/data/_uploaded/'.$path.'/'.$file;
+			$img		= common::GetUrl($img);
 			$thumb		= self::ThumbnailPath($img);
 			$checked	= '';
 
@@ -196,27 +199,27 @@ class WallpaperChanger{
 				continue;
 			}
 
-			if( $curr == $file ){
+			if( $curr == $img ){
 				$checked = ' checked';
+				$curr_shown = true;
 			}
 
 			echo '<label>';
-			echo '<input type="radio" name="image" value="'.htmlspecialchars($file).'" '.$checked.' />';
-			echo '<img src="'.common::GetUrl($thumb).'" alt="'.htmlspecialchars($file).'" />';
+			echo '<input type="radio" name="image" value="'.htmlspecialchars($img).'" '.$checked.' />';
+			echo '<img src="'.$thumb.'" alt="'.htmlspecialchars($file).'" title="'.htmlspecialchars($img).'" />';
 			echo '</label>';
 		}
 
 
 		// if choosen image is located in some other directory
-		if( isset($this->config['pages'][$title]) && $this->config['pages'][$title]['img'] != common::GetDir('/data/_uploaded/'.$path.'/'.$curr) ){
-			if( !file_exists($dataDir.$this->config['pages'][$title]['img']) ){
-				$curr .= ' !'; // if the image was deleted
-			}
+		if( !$curr_shown && !empty($curr) ){
+			$thumb		= self::ThumbnailPath($curr);
 			echo '<label>';
-			echo '<input type="radio" name="image" value="'.htmlspecialchars($file).'" checked />';
-			echo '<img src="" alt="'.$curr.'" />';
+			echo '<input type="radio" name="image" value="'.htmlspecialchars($curr).'" checked />';
+			echo '<img src="'.$thumb.'" alt="'.htmlspecialchars($curr_name).'" title="'.htmlspecialchars($curr).'" />';
 			echo '</label>';
 		}
+
 
 		echo '</div>';
 	}
@@ -325,20 +328,11 @@ class WallpaperChanger{
 
 
 		// set background image
-		} elseif (file_exists($dataDir.'/data/_uploaded/'.trim($this->config['path'],'/\\').'/'.$bg)) {
-
-			$this->config['pages'][$title]['img'] = common::GetDir('/data/_uploaded/').trim($this->config['path'],'/\\').'/'.$bg;
-			if (!isset($this->config['pages'][$title]['style'])) {
-				$this->config['pages'][$title]['style'] = 1;
-			}
-
-		} else {
-			msg('Invalid background "'.$bg.'"');
-			return false;
+		}else{
+			$this->config['pages'][$title]['img'] = $bg;
 		}
 
 		return true;
-
 	}
 
 
