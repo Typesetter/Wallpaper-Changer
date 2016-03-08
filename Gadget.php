@@ -32,7 +32,7 @@ class WallpaperChanger{
 
 		if( common::LoggedIn() ){
 			$page->admin_links[]		= array($page->title,'Select Wallpaper','cmd=SelectWallpaperDialog',' data-cmd="gpabox"');
-			//gpPlugin::js('switchbg.js');
+			gpPlugin::js('switchbg.js');
 			gpPlugin::css('switchbg.css');
 
 			switch($cmd){
@@ -96,11 +96,16 @@ class WallpaperChanger{
 	 */
 	function PageCSS($title){
 
+		if( !isset($this->config['pages'][$title]) ){
+			return '';
+		}
+
 		if( isset($this->config['pages'][$title]['custom'])) {
 			return $this->config['pages'][$title]['custom'];
 		}
 
 		$style = $this->config['pages'][$title]['style'];
+
 		if( isset($this->config['style'.$style]) ){
 			return $this->config['style'.$style];
 		}
@@ -239,21 +244,32 @@ class WallpaperChanger{
 		global $title;
 
 
-		$curr_style = 0;
-		if( !isset($this->config['pages'][$title]['custom']) && isset($this->config['pages'][$title]['style']) ){
-			$curr_style = $this->config['pages'][$title]['style'];
+		$curr_style			= -1;
+		$textarea_style		= 'display:none';
+		if( isset($this->config['pages'][$title]['custom']) ){
+			$curr_style		= 0;
+			$textarea_style = '';
+
+		}elseif( isset($this->config['pages'][$title]['style']) ){
+			$curr_style		= $this->config['pages'][$title]['style'];
 		}
 
 		echo '<b>CSS: </b>';
 		echo '<select name="style" class="switch_background_style" title="Style">';
+		echo '<option value="-1" '.($curr_style==-1 ? 'selected="selected"':'').'> None </option>';
+
 		for($i = 1; $i <=4; $i++){
 			echo '<option value="'.$i.'" '.($curr_style==$i ? 'selected="selected"':'').'>Style '.$i.'</option>';
 		}
 
-		if( isset($this->config['pages'][$title]['custom']) ){
-			echo '<option value="0" '.($curr_style==0 ? 'selected="selected"':'').'> Custom </option>'; //custom
-		}
+		echo '<option value="0" '.($curr_style==0 ? 'selected="selected"':'').'> Custom </option>'; //custom
 		echo '</select>';
+
+
+		$css = $this->PageCSS($title);
+		echo '<textarea id="wallpaper_changer_custom" name="custom_css" cols="50" rows="6" style="width:100%;'.$textarea_style.'">';
+		echo htmlspecialchars($css);
+		echo '</textarea>';
 	}
 
 
@@ -329,12 +345,29 @@ class WallpaperChanger{
 			return false;
 		}
 
-		$i = 0+$_POST['style'];
-		if ( ($i && !isset($this->config['style'.$i])) || (!$i && !isset($this->config['pages'][$title]['custom'])) ) {
+		$i			= (int)$_POST['style'];
+		$custom		= trim($_POST['custom_css']);
+
+		if( $i === 0 ){
+
+			if( empty($custom) ){
+				msg('Custom CSS Required');
+				return false;
+			}
+
+			$this->config['pages'][$title]['custom'] = $custom;
+
+		}elseif( $i === -1 ){
+			unset($this->config['pages'][$title]);
+
+		}elseif( isset($this->config['style'.$i]) ){
+			unset($this->config['pages'][$title]['custom']);
+			$this->config['pages'][$title]['style'] = $i; // set background style
+
+		}else{
 			msg('Invalid style #'.$i);
 			return false;
 		}
-		$this->config['pages'][$title]['style'] = $i; // set background style
 
 		return true;
 	}

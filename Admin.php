@@ -93,16 +93,8 @@ class WallpaperChangerAdmin extends WallpaperChanger{
 			return;
 		}
 
-		if (isset($this->config['pages'][$title]['custom'])) {
-			$css = $this->config['pages'][$title]['custom'];
-		} else {
-			$style = $this->config['pages'][$title]['style'];
-			if (isset($this->config['style'.$style])) {
-				$css = $this->config['style'.$style];
-			} else {
-				$css = $this->config['style1'];
-			}
-		}
+		$css = $this->PageCSS($title);
+
 		echo '<h2>Edit CSS: '.htmlspecialchars($title).'</h2>';
 		echo '<form action="'.common::GetUrl('Admin_Wallpaper_Changer').'" method="post">';
 		echo '<textarea name="stylec" cols="50" rows="6" style="width:100%">'.htmlspecialchars($css).'</textarea>';
@@ -132,6 +124,7 @@ class WallpaperChangerAdmin extends WallpaperChanger{
 			unset($this->config['pages'][$t]['custom']);
 		}else{
 			$this->config['pages'][$t]['custom'] = $css;
+			$this->config['pages'][$t]['style'] = 0;
 		}
 
 		if( gpFiles::SaveArray($this->config_file,'config',$this->config) ){
