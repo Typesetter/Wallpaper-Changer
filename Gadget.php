@@ -34,7 +34,6 @@ class WallpaperChanger{
 	public function PageRunScript($cmd){
 		global $page;
 
-
 		if( common::LoggedIn() ){
 			$page->admin_links[]		= array($page->title,'Select Wallpaper','cmd=SelectWallpaperDialog',' data-cmd="gpabox"');
 
@@ -42,7 +41,9 @@ class WallpaperChanger{
 
 				// on current page
 				case 'SelectWallpaperDialog':
+				ob_start();
 				$this->SelectWallpaperDialog();
+				$page->contentBuffer = ob_get_clean();
 				return 'return';
 
 				case 'SelectWallpaper':
@@ -86,7 +87,9 @@ class WallpaperChanger{
 		if( $dirPrefix!='' ){
 			$imgDir = substr($dataDir, 0, strlen($dataDir) - strlen($dirPrefix));
 		}
-		if( !file_exists($imgDir.$img) ){
+
+		$full = str_replace('%20',' ',$imgDir.$img);
+		if( !file_exists($full) ){
 			return;
 		}
 
@@ -191,7 +194,7 @@ class WallpaperChanger{
 
 			$full		= $dir.'/'.$file;
 			$img		= '/data/_uploaded/'.$path.'/'.$file;
-			$img		= common::GetUrl($img);
+			$img		= common::GetDir($img);
 			$thumb		= self::ThumbnailPath($img);
 			$checked	= '';
 
