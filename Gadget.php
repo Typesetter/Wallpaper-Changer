@@ -120,7 +120,7 @@ class WallpaperChanger{
 		} else {
 			//default config
 			$this->config = array();
-			$this->config['path'] = '/image';
+			$this->config['path'] = '/image/';
 			$this->config['style1'] = $this->default_style1;
 			$this->config['style2'] = $this->default_style2;
 			$this->config['style3'] = $this->default_style3;
@@ -171,7 +171,8 @@ class WallpaperChanger{
 
 
 		//display available images
-		$dir	= $dataDir.'/data/_uploaded/'.trim($this->config['path'],'/\\');
+		$path	= trim($this->config['path'],'/\\');
+		$dir	= $dataDir.'/data/_uploaded/'.$path;
 		$files	= scandir($dir);
 		echo '<div class="wallpaper_images">';
 		foreach($files as $file){
@@ -181,7 +182,7 @@ class WallpaperChanger{
 			}
 
 			$full		= $dir.'/'.$file;
-			$img		= '/data/_uploaded'.$this->config['path'].'/'.$file;
+			$img		= '/data/_uploaded/'.$path.'/'.$file;
 			$thumb		= self::ThumbnailPath($img);
 			$checked	= '';
 
@@ -201,7 +202,7 @@ class WallpaperChanger{
 
 
 		// if choosen image is located in some other directory
-		if( isset($this->config['pages'][$title]) && $this->config['pages'][$title]['img'] != common::GetDir('/data/_uploaded'.$this->config['path'].'/'.$curr) ){
+		if( isset($this->config['pages'][$title]) && $this->config['pages'][$title]['img'] != common::GetDir('/data/_uploaded/'.$path.'/'.$curr) ){
 			if( !file_exists($dataDir.$this->config['pages'][$title]['img']) ){
 				$curr .= ' !'; // if the image was deleted
 			}
@@ -316,9 +317,9 @@ class WallpaperChanger{
 
 
 		// set background image
-		} elseif (file_exists($dataDir.'/data/_uploaded'.$this->config['path'].'/'.$bg)) {
+		} elseif (file_exists($dataDir.'/data/_uploaded/'.trim($this->config['path'],'/\\').'/'.$bg)) {
 
-			$this->config['pages'][$title]['img'] = common::GetDir('/data/_uploaded').$this->config['path'].'/'.$bg;
+			$this->config['pages'][$title]['img'] = common::GetDir('/data/_uploaded/').trim($this->config['path'],'/\\').'/'.$bg;
 			if (!isset($this->config['pages'][$title]['style'])) {
 				$this->config['pages'][$title]['style'] = 1;
 			}

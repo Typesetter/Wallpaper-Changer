@@ -11,12 +11,11 @@ class WallpaperChangerAdmin extends WallpaperChanger{
 
 		parent::__construct();
 
-		if (isset($_POST['save'])) {
-			$this->Save_Config();
-		}
-
 		$cmd = common::GetCommand();
 		switch($cmd){
+			case 'SaveWallpaperConfig';
+				$this->SaveWallpaperConfig();
+			break;
 			case 'EditCustom':
 				$this->EditCustom();
 			return;
@@ -50,7 +49,7 @@ class WallpaperChangerAdmin extends WallpaperChanger{
 			echo '<div style="font-size:large; margin:0.5em 0; cursor:pointer" onclick="$(this).next(\'textarea\').toggle()">Common Style '.$i.'</div>';
 			echo '<textarea name="style'.$i.'" cols="50" rows="6" style="width:100%;display:none;">'.htmlspecialchars($this->config['style'.$i]).'</textarea><br/>';
 		}
-		echo '<input type="submit" name="save" value="'.$langmessage['save'].'" class="gpsubmit" />';
+		echo '<button type="submit" name="cmd" value="SaveWallpaperConfig" class="gpsubmit">'.$langmessage['save'].'</button>';
 		echo '<span style="float:right">See also: <a href="http://www.w3schools.com/css/css_background.asp" target="_blank">w3 schools</a>, <a href="http://stackoverflow.com/questions/1150163/stretch-and-scale-a-css-image-in-the-background-with-css-only/9845744#9845744" target="_blank">stretched img</a> ...</span>';
 		echo '</form>';
 
@@ -132,8 +131,13 @@ class WallpaperChangerAdmin extends WallpaperChanger{
 		}
 	}
 
-	function Save_Config() {
-		global $langmessage;
+	/**
+	 * Save the addon configuration
+	 *
+	 */
+	function SaveWallpaperConfig(){
+		global $langmessage, $dataDir;
+
 		$s = trim($_POST['path']);
 		if ($s=='') {
 			$s='/';
@@ -144,6 +148,22 @@ class WallpaperChangerAdmin extends WallpaperChanger{
 		if ($s[strlen($s)-1]=='/') {
 			$s=substr($s,0,-1);
 		}
+
+		//check the directory
+		$data_real	= realpath($dataDir);
+		$dir		= realpath($dataDir.'/data/_uploaded/'.trim($s,'/\\'));
+
+		if( !is_dir($dir) ){
+			msg('Image directory is not a folder');
+			return false;
+		}
+
+		if( strpos($dir,$data_real) !== 0 ){
+			msg('Invalid image directory');
+			return false;
+		}
+
+
 		$this->config['path'] = $s;
 		$this->config['style1'] = trim($_POST['style1']);
 		$this->config['style2'] = trim($_POST['style2']);
