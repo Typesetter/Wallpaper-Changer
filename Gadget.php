@@ -274,7 +274,7 @@ class WallpaperChanger{
 
 
 		$css = $this->PageCSS($title);
-		echo '<textarea id="wallpaper_changer_custom" name="custom_css" cols="50" rows="6" style="width:100%;'.$textarea_style.'">';
+		echo '<textarea id="wallpaper_changer_custom" name="custom_css" cols="50" rows="6" class="gptextarea" style="width:100%;'.$textarea_style.'">';
 		echo htmlspecialchars($css);
 		echo '</textarea>';
 	}

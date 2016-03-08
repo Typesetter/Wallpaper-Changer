@@ -42,7 +42,7 @@ class WallpaperChangerAdmin extends WallpaperChanger{
 		echo common::Link('Admin_Uploaded',$langmessage['uploaded_files'],'','onclick="var pos=this.href.indexOf(\'?\'); if (pos>-1) this.href = this.href.substr(0,pos); this.href += \'?dir=\'+encodeURIComponent(document.forms.wpconfig.path.value);" target="_blank"').'</label><br/><br/>';
 		for ($i=1; $i<=4; $i++) {
 			echo '<div style="font-size:large; margin:0.5em 0; cursor:pointer" onclick="$(this).next(\'textarea\').toggle()">Common Style '.$i.'</div>';
-			echo '<textarea name="style'.$i.'" cols="50" rows="6" style="width:100%;display:none;">'.htmlspecialchars($this->config['style'.$i]).'</textarea><br/>';
+			echo '<textarea class="gptextarea" name="style'.$i.'" cols="50" rows="6" style="width:100%;display:none;">'.htmlspecialchars($this->config['style'.$i]).'</textarea><br/>';
 		}
 		echo '<button type="submit" name="cmd" value="SaveWallpaperConfig" class="gpsubmit">'.$langmessage['save'].'</button>';
 		echo '<span style="float:right">See also: <a href="http://www.w3schools.com/css/css_background.asp" target="_blank">w3 schools</a>, <a href="http://stackoverflow.com/questions/1150163/stretch-and-scale-a-css-image-in-the-background-with-css-only/9845744#9845744" target="_blank">stretched img</a> ...</span>';
