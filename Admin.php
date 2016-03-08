@@ -16,14 +16,9 @@ class WallpaperChangerAdmin extends WallpaperChanger{
 			case 'SaveWallpaperConfig';
 				$this->SaveWallpaperConfig();
 			break;
-			case 'EditCustom':
-				$this->EditCustom();
-			return;
-
-			case 'SaveCustom':
-				$this->SaveCustom();
+			case 'SelectWallpaper':
+				$this->SelectWallpaper();
 			break;
-
 		}
 
 		$this->Show_Config();
@@ -67,69 +62,18 @@ class WallpaperChangerAdmin extends WallpaperChanger{
 			echo '</td><td>';
 
 			if( !empty($info['custom']) ){
-				echo common::Link('Admin_Wallpaper_Changer','Custom CSS','cmd=EditCustom&title='.$page);
+				echo 'Custom';
 			}else{
-				echo '#'.$info['style'].' &nbsp; ';
-				echo common::Link('Admin_Wallpaper_Changer','Customize','cmd=EditCustom&title='.$page);
+				echo '#'.$info['style'];
 			}
+			echo ' &nbsp; ';
+			echo common::Link($page,$langmessage['edit'],'cmd=SelectWallpaperDialog','data-cmd="gpabox"');
 			echo '</td></tr>';
 		}
 		echo '</tbody>';
 		echo '</table>';
 	}
 
-	/**
-	 * Edit custom css for page
-	 *
-	 */
-	function EditCustom(){
-		global $langmessage;
-
-		$title =& $_GET['title'];
-
-		if( !isset($this->config['pages'][$title]) ){
-			msg('Invalid title '.htmlspecialchars($title));
-			return;
-		}
-
-		$css = $this->PageCSS($title);
-
-		echo '<h2>Edit CSS: '.htmlspecialchars($title).'</h2>';
-		echo '<form action="'.common::GetUrl('Admin_Wallpaper_Changer').'" method="post">';
-		echo '<textarea name="stylec" cols="50" rows="6" style="width:100%">'.htmlspecialchars($css).'</textarea>';
-
-		echo '<br/>';
-		echo '<input type="hidden" name="title" value="'.htmlspecialchars($title).'" />';
-		echo '<button class="gpsubmit" type="submit" name="cmd" value="SaveCustom">'.$langmessage['save'].'</button> ';
-		echo '<button class="gpcancel" type="submit">'.$langmessage['cancel'].'</button> ';
-		echo '</form>';
-	}
-
-	/**
-	 * Save custom css for a page
-	 *
-	 */
-	function SaveCustom(){
-		global $langmessage;
-		$t = trim($_POST['title']);
-
-		if( !isset($this->config['pages'][$t]) ){
-			msg('Invalid title '.htmlspecialchars($t));
-			return;
-		}
-
-		$css = trim($_POST['stylec']);
-		if( $css=='' ){
-			unset($this->config['pages'][$t]['custom']);
-		}else{
-			$this->config['pages'][$t]['custom'] = $css;
-			$this->config['pages'][$t]['style'] = 0;
-		}
-
-		if( gpFiles::SaveArray($this->config_file,'config',$this->config) ){
-			msg($langmessage['SAVED'].' ('.htmlspecialchars($t).' , CSS)');
-		}
-	}
 
 	/**
 	 * Save the addon configuration

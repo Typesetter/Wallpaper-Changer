@@ -19,6 +19,11 @@ class WallpaperChanger{
 
 		$this->config_file = $addonPathData.'/config.php';
 		$this->Load_Config();
+
+		if( common::LoggedIn() ){
+			gpPlugin::js('switchbg.js');
+			gpPlugin::css('switchbg.css');
+		}
 	}
 
 
@@ -32,18 +37,18 @@ class WallpaperChanger{
 
 		if( common::LoggedIn() ){
 			$page->admin_links[]		= array($page->title,'Select Wallpaper','cmd=SelectWallpaperDialog',' data-cmd="gpabox"');
-			gpPlugin::js('switchbg.js');
-			gpPlugin::css('switchbg.css');
 
 			switch($cmd){
+
+				// on current page
+				case 'SelectWallpaperDialog':
+				$this->SelectWallpaperDialog();
+				return 'return';
+
 				case 'SelectWallpaper':
 				$this->SelectWallpaper();
 				$this->SetWallpaper();
 				return '';
-
-				case 'SelectWallpaperDialog':
-				$this->SelectWallpaperDialog();
-				return 'return';
 			}
 		}
 
@@ -135,10 +140,11 @@ class WallpaperChanger{
 	 *
 	 */
 	function SelectWallpaperDialog(){
-		global $langmessage;
+		global $langmessage, $title;
 
 		echo '<div class="inline_box">';
 		echo '<form method="post" action="?">';
+		echo '<input type="hidden" name="title" value="'.htmlspecialchars($title).'" />';
 		echo '<h3>Select Wallpaper</h3>';
 		$this->StyleSelect();
 		echo '<hr/>';
@@ -281,11 +287,13 @@ class WallpaperChanger{
 	function SelectWallpaper(){
 		global $langmessage;
 
-		if( !$this->SwitchImage() ){
+		$title = $_POST['title'];
+
+		if( !$this->SwitchImage($title) ){
 			return;
 		}
 
-		if( !$this->SwitchStyle() ){
+		if( !$this->SwitchStyle($title) ){
 			return;
 		}
 
@@ -299,8 +307,8 @@ class WallpaperChanger{
 	 * Change the background image used for the current page;
 	 *
 	 */
-	function SwitchImage(){
-		global $title, $langmessage, $dataDir;
+	function SwitchImage($title){
+		global $langmessage, $dataDir;
 
 		if( !isset($_POST['image']) ){
 			return false;
@@ -339,8 +347,8 @@ class WallpaperChanger{
 	 * Change the css used for the current page
 	 *
 	 */
-	function SwitchStyle(){
-		global $title, $langmessage;
+	function SwitchStyle($title){
+		global $langmessage;
 
 		if( !isset($_POST['style']) || !isset($this->config['pages'][$title]) ){
 			return false;
