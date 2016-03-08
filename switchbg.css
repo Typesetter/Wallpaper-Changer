@@ -1,0 +1,27 @@
+
+div.wallpaper_images{
+	margin:0 -10px;
+	}
+div.wallpaper_images label{
+	display:inline-block;
+	overflow:hidden;
+	padding:10px;
+	position:relative;
+	cursor:pointer;
+	}
+
+div.wallpaper_images label input{
+	position:absolute;
+	left:-30px;
+	top:0;
+	}
+
+div.wallpaper_images label img{
+	border:3px solid #ddd;
+	padding:3px;
+	border-radius:3px;
+	}
+
+div.wallpaper_images label input:checked + img{
+	border-color:green;
+	}
