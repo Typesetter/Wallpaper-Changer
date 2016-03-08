@@ -123,7 +123,7 @@ class WallpaperChanger{
 		$this->ImageSelect();
 		echo '<hr/>';
 		echo '<button type="submit" name="cmd" value="SelectWallpaper" class="gpsubmit">'.$langmessage['save'].'</button> ';
-		echo '<button class="gpcancel">'.$langmessage['cancel'].'</button> ';
+		echo '<button class="gpcancel" data-cmd="admin_box_close">'.$langmessage['cancel'].'</button> ';
 		echo ' '.common::Link('Admin_Wallpaper_Changer','Admin');
 		echo '</form>';
 		echo '</div>';
@@ -221,23 +221,20 @@ class WallpaperChanger{
 	function StyleSelect(){
 		global $title;
 
-		if( !isset($this->config['pages'][$title]) ){
-			return;
+
+		$curr_style = 0;
+		if( isset($this->config['pages'][$title]['style']) ){
+			$curr_style = $this->config['pages'][$title]['style'];
 		}
 
-		if( !isset($this->config['pages'][$title]['style']) ){
-			$this->config['pages'][$title]['style'] = 0; // only for compatibility with previous version
-		}
-
-		$curr = $this->config['pages'][$title]['style'];
 		echo '<b>CSS: </b>';
 		echo '<select name="style" class="switch_background_style" title="Style">';
 		for($i = 1; $i <=4; $i++){
-			echo '<option value="'.$i.'" '.($curr==$i ? 'selected="selected"':'').'>Style '.$i.'</option>';
+			echo '<option value="'.$i.'" '.($curr_style==$i ? 'selected="selected"':'').'>Style '.$i.'</option>';
 		}
 
 		if( isset($this->config['pages'][$title]['custom']) ){
-			echo '<option value="0" '.($curr==0 ? 'selected="selected"':'').'> Custom </option>'; //custom
+			echo '<option value="0" '.($curr_style==0 ? 'selected="selected"':'').'> Custom </option>'; //custom
 		}
 		echo '</select>';
 	}
