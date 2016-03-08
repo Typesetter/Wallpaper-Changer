@@ -75,7 +75,9 @@ class WallpaperChanger{
 		}
 		if ($style) {
 			$style = $this->config['style'.$style];
+			msg('style');
 		} else {
+			msg('custom');
 			$style = $this->config['pages'][$title]['custom'];
 		}
 		//echo $rootDir.$img.$style.$dirPrefix.'test';
