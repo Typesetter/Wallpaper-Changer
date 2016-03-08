@@ -68,29 +68,44 @@ class WallpaperChanger{
 		if( !isset($this->config['pages']) || !isset($this->config['pages'][$title]) ){
 			return;
 		}
-		$img = $this->config['pages'][$title]['img'];
-		$style = $this->config['pages'][$title]['style'];
-		if (!$style && !isset($this->config['pages'][$title]['custom'])) {
+
+		$img	= $this->config['pages'][$title]['img'];
+		$css	= $this->PageCSS($title);
+
+		if( empty($css) ){
 			return;
 		}
-		if ($style) {
-			$style = $this->config['style'.$style];
-			msg('style');
-		} else {
-			msg('custom');
-			$style = $this->config['pages'][$title]['custom'];
-		}
-		//echo $rootDir.$img.$style.$dirPrefix.'test';
+
+
 		$imgDir = $dataDir;
-		if ($dirPrefix!='') {
+		if( $dirPrefix!='' ){
 			$imgDir = substr($dataDir, 0, strlen($dataDir) - strlen($dirPrefix));
 		}
-		if (!file_exists($imgDir.$img)) {
+		if( !file_exists($imgDir.$img) ){
 			return;
 		}
-		//echo $imgDir.$img.'aaa';
-		$style = str_replace('%IMG%', $img, $style);
-		$page->head .= '<style type="text/css">'.$style.'</style>';
+
+		$css = str_replace('%IMG%', $img, $css);
+		$page->head .= '<style type="text/css">'.$css.'</style>';
+	}
+
+
+	/**
+	 * Return the CSS for the page
+	 *
+	 */
+	function PageCSS($title){
+
+		if( isset($this->config['pages'][$title]['custom'])) {
+			return $this->config['pages'][$title]['custom'];
+		}
+
+		$style = $this->config['pages'][$title]['style'];
+		if( isset($this->config['style'.$style]) ){
+			return $this->config['style'.$style];
+		}
+
+		return '';
 	}
 
 	function Load_Config() {
@@ -225,7 +240,7 @@ class WallpaperChanger{
 
 
 		$curr_style = 0;
-		if( isset($this->config['pages'][$title]['style']) ){
+		if( !isset($this->config['pages'][$title]['custom']) && isset($this->config['pages'][$title]['style']) ){
 			$curr_style = $this->config['pages'][$title]['style'];
 		}
 

@@ -66,7 +66,13 @@ class WallpaperChangerAdmin extends WallpaperChanger{
 			echo '</td><td>';
 			echo '<a href="'.$info['img'].'" name="gallery" rel="gallery_uploaded">'.basename($info['img']).'</a>';
 			echo '</td><td>';
-			echo common::Link('Admin_Wallpaper_Changer',$langmessage['edit'],'cmd=EditCustom&title='.$page);
+
+			if( !empty($info['custom']) ){
+				echo common::Link('Admin_Wallpaper_Changer','Custom CSS','cmd=EditCustom&title='.$page);
+			}else{
+				echo '#'.$info['style'].' &nbsp; ';
+				echo common::Link('Admin_Wallpaper_Changer','Customize','cmd=EditCustom&title='.$page);
+			}
 			echo '</td></tr>';
 		}
 		echo '</tbody>';
