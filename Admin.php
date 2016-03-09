@@ -22,8 +22,6 @@ class WallpaperChangerAdmin extends WallpaperChanger{
 		}
 
 		$this->Show_Config();
-
-		echo pre($this->config);
 	}
 
 

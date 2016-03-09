@@ -59,11 +59,6 @@ class WallpaperChanger{
 	}
 
 
-	function RunScript(){}
-
-
-
-
 	/**
 	 * Add the selected css (with the selected image) to the page
 	 *
@@ -377,5 +372,7 @@ class WallpaperChanger{
 
 		return true;
 	}
+
+	static function BackwardsCompat(){}
 
 }
